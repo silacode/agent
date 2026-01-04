@@ -154,10 +154,10 @@ class TestRunAgent:
         mock_response.output_text = """Thought: This is a simple question.
 Answer: The answer is 42."""
 
-        with patch("src.agent.AsyncOpenAI") as mock_openai_class:
+        with patch("src.agent.get_client") as mock_get_client:
             mock_client = AsyncMock()
             mock_client.responses.create.return_value = mock_response
-            mock_openai_class.return_value = mock_client
+            mock_get_client.return_value = mock_client
 
             result = await run_agent("What is the meaning of life?")
 
@@ -177,10 +177,10 @@ Action: {"tool_name": "get_weather", "arguments": {"lat": 48.85, "lon": 2.35}}""
         second_response.output_text = """Thought: I have the weather data.
 Answer: The weather in Paris is clear with 20°C."""
 
-        with patch("src.agent.AsyncOpenAI") as mock_openai_class:
+        with patch("src.agent.get_client") as mock_get_client:
             mock_client = AsyncMock()
             mock_client.responses.create.side_effect = [first_response, second_response]
-            mock_openai_class.return_value = mock_client
+            mock_get_client.return_value = mock_client
 
             with patch("src.agent.handle_tool_call") as mock_tool:
                 mock_tool.return_value = mock_weather_response
@@ -202,10 +202,10 @@ Answer: The weather in Paris is clear with 20°C."""
         loop_response.output_text = """Thought: I need more information.
 Action: {"tool_name": "web_search", "arguments": {"query": "something"}}"""
 
-        with patch("src.agent.AsyncOpenAI") as mock_openai_class:
+        with patch("src.agent.get_client") as mock_get_client:
             mock_client = AsyncMock()
             mock_client.responses.create.return_value = loop_response
-            mock_openai_class.return_value = mock_client
+            mock_get_client.return_value = mock_client
 
             with patch("src.agent.handle_tool_call") as mock_tool:
                 mock_tool.return_value = {"results": []}
@@ -231,10 +231,10 @@ Action: {"tool_name": "web_search", "arguments": {"query": "test"}}"""
         second_response.output_text = """Thought: The search failed, I'll provide what I know.
 Answer: I couldn't search, but here's my best answer."""
 
-        with patch("src.agent.AsyncOpenAI") as mock_openai_class:
+        with patch("src.agent.get_client") as mock_get_client:
             mock_client = AsyncMock()
             mock_client.responses.create.side_effect = [first_response, second_response]
-            mock_openai_class.return_value = mock_client
+            mock_get_client.return_value = mock_client
 
             with patch("src.agent.handle_tool_call") as mock_tool:
                 mock_tool.side_effect = Exception("API rate limit exceeded")
@@ -249,10 +249,10 @@ Answer: I couldn't search, but here's my best answer."""
         response.output_text = """Thought: I need to do something.
 Action: {"arguments": {"query": "test"}}"""
 
-        with patch("src.agent.AsyncOpenAI") as mock_openai_class:
+        with patch("src.agent.get_client") as mock_get_client:
             mock_client = AsyncMock()
             mock_client.responses.create.return_value = response
-            mock_openai_class.return_value = mock_client
+            mock_get_client.return_value = mock_client
 
             result = await run_agent("Do something")
 
@@ -269,13 +269,13 @@ Action: {"arguments": {"query": "test"}}"""
         complete_response.output_text = """Thought: Now I know the answer.
 Answer: Here is the complete answer."""
 
-        with patch("src.agent.AsyncOpenAI") as mock_openai_class:
+        with patch("src.agent.get_client") as mock_get_client:
             mock_client = AsyncMock()
             mock_client.responses.create.side_effect = [
                 incomplete_response,
                 complete_response,
             ]
-            mock_openai_class.return_value = mock_client
+            mock_get_client.return_value = mock_client
 
             result = await run_agent("Ask something")
 
