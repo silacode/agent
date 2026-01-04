@@ -1,13 +1,12 @@
 # Configuration and settings
+from openai.types import ReasoningEffort
 import os
 from dataclasses import dataclass
-from typing import Literal
 
 from dotenv import load_dotenv
 
-load_dotenv()
 
-ReasoningEffort = Literal["none", "minimal", "low", "medium", "high", "xhigh"]
+load_dotenv()
 
 
 @dataclass
