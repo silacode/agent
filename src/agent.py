@@ -1,8 +1,8 @@
 # Main agent logic and conversation loop
 import json
 import re
-from openai import AsyncOpenAI
 
+from src.client import get_client
 from src.config import config
 from src.prompts.system import SYSTEM_PROMPT
 from src.tools.handlers import handle_tool_call
@@ -56,7 +56,7 @@ async def run_agent(user_message: str, max_iterations: int = 10) -> str:
     Returns:
         The final response from the agent
     """
-    client = AsyncOpenAI(api_key=config.api_key)
+    client = get_client()
 
     # Build the conversation as a single input string
     conversation = f"{SYSTEM_PROMPT}\n\nUser: {user_message}"
@@ -69,7 +69,7 @@ async def run_agent(user_message: str, max_iterations: int = 10) -> str:
             model=config.model,
             input=conversation,
             max_output_tokens=config.max_tokens,
-            reasoning={"effort": "medium"},
+            reasoning={"effort": config.reasoning_effort},
         )
 
         assistant_message = response.output_text

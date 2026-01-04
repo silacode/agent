@@ -1,9 +1,13 @@
 # Configuration and settings
 import os
 from dataclasses import dataclass
+from typing import Literal
+
 from dotenv import load_dotenv
 
 load_dotenv()
+
+ReasoningEffort = Literal["none", "minimal", "low", "medium", "high", "xhigh"]
 
 
 @dataclass
@@ -11,7 +15,7 @@ class OpenAIConfig:
     api_key: str = os.getenv("OPENAI_API_KEY", "")
     model: str = "gpt-5-nano"
     max_tokens: int = 2048
-    # Note: gpt-5 doesn't support temperature; reasoning.effort supports minimal/low/medium/high
+    reasoning_effort: ReasoningEffort = "medium"
 
 
 @dataclass
